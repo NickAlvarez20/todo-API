@@ -40,7 +40,45 @@ func todosHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "Get single todo - path: %s", r.URL.Path)
 		}
 	case http.MethodPost:
-		// handle POST here
+		// Only allow POST on the collection endpoint (/todos or /todos/)
+		// Guard clause for early returns if URL path is incorrect during the POST request
+		if r.URL.Path != "/todos" && r.URL.Path != "/todos/" {
+			http.Error(w, "Method not allowed on this path", http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Struct to hold the incoming JSON data
+		var input struct {
+			Title string `json:"title"`
+		}
+
+		// Decode the JSON body using encoding/json package
+		if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		// Validate that title is provided
+		if input.Title == "" {
+			http.Error(w, "Title is required", http.StatusBadRequest)
+			return
+		}
+
+		// Create and append the new todo (thread-safe)
+		mu.Lock()
+		newTodo := Todo{
+			ID:    nextID,
+			Title: input.Title,
+			Done:  false,
+		}
+		todos = append(todos, newTodo)
+		nextID++
+		mu.Unlock()
+
+		// Respond with 201 Created and the new todo
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(newTodo)
+
 	case http.MethodDelete:
 		// handle DELETE here
 	default:
