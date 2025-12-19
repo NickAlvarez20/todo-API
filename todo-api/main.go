@@ -22,12 +22,28 @@ type Todo struct {
 	Done  bool   `json:"done"`
 }
 
-var todos []Todo // Slice to hold all todos
+var todos []Todo   // Slice to hold all todos
 var nextID int = 1 // A counter for the next available ID (start at 1)
-var mu sync.Mutex // A mutex to make it safe when multiple requests try to read/write the todos at the same time (Add sync to import)
+var mu sync.Mutex  // A mutex to make it safe when multiple requests try to read/write the todos at the same time (Add sync to import)
 
-func todosHandler(w http.ResponseWriter, r *http.Request){
-	fmt.Fprintf(w, "Todos endpoint hit: %s %s", r.Method, r.URL.Path)
+func todosHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	switch r.Method {
+	case http.MethodGet:
+		if r.URL.Path == "/todos" || r.URL.Path == "/todos/"{
+			fmt.Fprintf(w, "List all todos")
+		} else{
+			fmt.Fprintf(w, "Get single todo - path: %s", r.URL.Path)
+		}
+	case http.MethodPost:
+		// handle POST here
+	case http.MethodDelete:
+		// handle DELETE here
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+
 }
 
 func main() {
@@ -36,8 +52,6 @@ func main() {
 	http.HandleFunc("/todos/", todosHandler)
 	// Register the handler function for the "/hello" path
 	http.HandleFunc("/", helloHandler)
-	
-
 
 	// Log the server start message
 	log.Println("Server starting on port 8080...")
