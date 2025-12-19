@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -31,9 +32,11 @@ func todosHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		if r.URL.Path == "/todos" || r.URL.Path == "/todos/"{
-			fmt.Fprintf(w, "List all todos")
-		} else{
+		if r.URL.Path == "/todos" || r.URL.Path == "/todos/" {
+			mu.Lock()
+			defer mu.Unlock()
+			json.NewEncoder(w).Encode(todos)
+		} else {
 			fmt.Fprintf(w, "Get single todo - path: %s", r.URL.Path)
 		}
 	case http.MethodPost:
