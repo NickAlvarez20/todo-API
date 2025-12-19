@@ -23,17 +23,24 @@ type Todo struct {
 }
 
 var todos []Todo // Slice to hold all todos
-
 var nextID int = 1 // A counter for the next available ID (start at 1)
-
 var mu sync.Mutex // A mutex to make it safe when multiple requests try to read/write the todos at the same time (Add sync to import)
 
+func todosHandler(w http.ResponseWriter, r *http.Request){
+	fmt.Fprintf(w, "Todos endpoint hit: %s %s", r.Method, r.URL.Path)
+}
+
 func main() {
+	// Priority for testing
+	http.HandleFunc("/todos", todosHandler)
+	http.HandleFunc("/todos/", todosHandler)
 	// Register the handler function for the "/hello" path
 	http.HandleFunc("/", helloHandler)
+	
+
 
 	// Log the server start message
-	fmt.Println("Server starting on port 8080...")
+	log.Println("Server starting on port 8080...")
 
 	// Start the http server.
 	// Passing nul as the second argument uses the default ServeMux.
