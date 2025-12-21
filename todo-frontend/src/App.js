@@ -85,7 +85,7 @@ function App() {
         overflowY: "auto",
         overflowX: "hidden",
         color: "#f0f0f0",
-        paddingBottom: "env(safe-area-inset-bottom, 60px)", // Extra safe area for notch/keyboards
+        paddingBottom: "env(safe-area-inset-bottom, 40px)",
       }}
     >
       {/* Main Christmas scene background */}
@@ -120,7 +120,7 @@ function App() {
         />
       </div>
 
-      {/* Snowstorm */}
+      {/* Medium-intensity snowstorm overlay */}
       <div
         style={{
           position: "fixed",
@@ -137,13 +137,15 @@ function App() {
         }}
       />
 
-      {/* Content */}
+      {/* Scrollable content container */}
       <div
         style={{
           position: "relative",
           zIndex: 3,
+          width: "100%",
           minHeight: "100vh",
-          padding: "20px 20px 140px 20px", // Extra bottom padding for mobile safety
+          overflowY: "auto",
+          padding: "20px 20px 120px 20px", // Extra bottom padding for footer space
           boxSizing: "border-box",
         }}
       >
@@ -161,7 +163,7 @@ function App() {
             🎄 My Christmas Todo List 🎄
           </h1>
 
-          {/* Form card */}
+          {/* Input form card */}
           <div
             style={{
               background: "rgba(255, 255, 255, 0.15)",
@@ -175,7 +177,11 @@ function App() {
           >
             <form
               onSubmit={handleSubmit}
-              style={{ display: "flex", flexDirection: "column", gap: "15px" }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px",
+              }}
               className="add-form"
             >
               <input
@@ -362,16 +368,29 @@ function App() {
           )}
         </div>
 
-        {/* Footer spacer — ensures last todo has breathing room */}
+        {/* Festive Footer */}
         <footer
           style={{
-            height: "100px",
-            width: "100%",
+            marginTop: "80px",
+            padding: "20px",
+            textAlign: "center",
+            color: "#ffd700",
+            fontSize: "1rem",
+            borderTop: "1px solid rgba(255,215,0,0.3)",
+            background: "rgba(0,0,0,0.3)",
+            backdropFilter: "blur(8px)",
           }}
-        />
+        >
+          <p style={{ margin: "10px 0" }}>
+            Made with ❤️ and holiday magic · {new Date().getFullYear()}
+          </p>
+          <p style={{ margin: "5px 0", fontSize: "0.9rem", opacity: 0.8 }}>
+            Merry Christmas & Happy Holidays! 🎅✨
+          </p>
+        </footer>
       </div>
 
-      {/* Animations & Responsive */}
+      {/* Animations */}
       <style jsx>{`
         @keyframes snowFall {
           0% {
@@ -410,6 +429,7 @@ function App() {
             transform: translateY(100vh) rotate(720deg);
           }
         }
+        /* Responsive */
         .add-form {
           flex-direction: column;
         }
@@ -417,28 +437,32 @@ function App() {
           flex-direction: column;
           align-items: flex-start;
         }
-        @media (min-width: 768px) {
-          .add-form {
-            flex-direction: row;
-          }
-          .todo-item {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-          }
-        }
-        @media (min-width: 1024px) {
-          h1 {
-            font-size: 3.5rem;
-          }
-        }
-        /* Mobile celebration text scaling */
         @media (max-width: 768px) {
+          [style*="padding: 20px 20px 80px 20px"] {
+            padding-bottom: 160px !important;
+          }
           h2[style*='fontSize: "4rem"'] {
             font-size: 3rem !important;
           }
           p[style*='fontSize: "2rem"'] {
             font-size: 1.6rem !important;
+          }
+          h1 {
+            font-size: 2.2rem !important;
+            margin-bottom: 30px;
+          }
+          .add-form > input,
+          .add-form > button {
+            font-size: 1.1rem;
+            padding: 14px 18px;
+          }
+          .todo-item > span {
+            font-size: 1.2rem;
+          }
+        }
+        @media (min-width: 1024px) {
+          h1 {
+            font-size: 3.5rem;
           }
         }
       `}</style>
