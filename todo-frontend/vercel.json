@@ -1,8 +1,30 @@
 {
-  "rewrites": [
-    { "source": "/todos/(.*)", "destination": "/api/index.go" },
-    { "source": "/todos", "destination": "/api/index.go" },
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.go",
+      "use": "@vercel/go"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/todos/(.*)",
+      "dest": "/api/index.go"
+    },
+    {
+      "src": "/todos",
+      "dest": "/api/index.go"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
   ]
 }

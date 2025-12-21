@@ -9,7 +9,7 @@ function App() {
 
   // useEffect variables
   useEffect(() => {
-    fetch("http://localhost:8080/todos")
+    fetch("/todos")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -31,7 +31,7 @@ function App() {
 
     if (newTitle.trim() === "") return; //don't add empty
 
-    const response = await fetch("http://localhost:8080/todos", {
+    const response = await fetch("/todos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title: newTitle }),
@@ -52,7 +52,7 @@ function App() {
     setCelebratingId(id);
     setShowCelebration(true);
 
-    const response = await fetch(`http://localhost:8080/todos/${id}`, {
+    const response = await fetch(`/todos/${id}`, {
       method: "DELETE",
     });
 

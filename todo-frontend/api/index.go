@@ -16,94 +16,75 @@ type Todo struct {
 }
 
 var todos = []Todo{}
-var nextID int = 1
+var nextID = 1
 var mu sync.Mutex
 
+// Vercel calls this function
 func Handler(w http.ResponseWriter, r *http.Request) {
-	// Set headers for CORS (good practice even on Vercel)
 	w.Header().Set("Content-Type", "application/json")
+
+	// Optional CORS (not needed on same domain, but safe)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-	// Log request
-	log.Printf("Request: %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
-
-	// Handle preflight OPTIONS
-	if r.Method == http.MethodOptions {
+	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	// Only handle /todos paths
-	if !strings.HasPrefix(r.URL.Path, "/todos") && r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
+	log.Printf("Request: %s %s", r.Method, r.URL.Path)
 
-	// Route to your existing handler logic
-	todosHandler(w, r)
-}
+	// Strip leading /api if present (Vercel adds it sometimes)
+	path := strings.TrimPrefix(r.URL.Path, "/api")
 
-// Your full existing todosHandler — copied exactly
-func todosHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		if r.URL.Path == "/todos" || r.URL.Path == "/todos/" {
+		if path == "/todos" || path == "/todos/" {
 			mu.Lock()
 			defer mu.Unlock()
 			json.NewEncoder(w).Encode(todos)
-		} else {
-			// Get single todo
-			idStr := strings.TrimPrefix(r.URL.Path, "/todos/")
-			idStr = strings.TrimSuffix(idStr, "/")
-			id, err := strconv.Atoi(idStr)
-			if err != nil || id < 1 {
-				http.Error(w, "Invalid todo ID", http.StatusBadRequest)
-				return
-			}
-
-			mu.Lock()
-			var found *Todo
-			for _, t := range todos {
-				if t.ID == id {
-					found = &t
-					break
-				}
-			}
-			mu.Unlock()
-
-			if found == nil {
-				http.Error(w, "Todo not found", http.StatusNotFound)
-				return
-			}
-			json.NewEncoder(w).Encode(found)
-		}
-
-	case http.MethodPost:
-		if r.URL.Path != "/todos" && r.URL.Path != "/todos/" {
-			http.Error(w, "Method not allowed on this path", http.StatusMethodNotAllowed)
 			return
 		}
 
-		var input struct {
-			Title string `json:"title"`
+		// Single todo
+		idStr := strings.TrimPrefix(path, "/todos/")
+		idStr = strings.TrimSuffix(idStr, "/")
+		id, err := strconv.Atoi(idStr)
+		if err != nil || id < 1 {
+			http.Error(w, "Invalid ID", http.StatusBadRequest)
+			return
 		}
+
+		mu.Lock()
+		for _, t := range todos {
+			if t.ID == id {
+				mu.Unlock()
+				json.NewEncoder(w).Encode(t)
+				return
+			}
+		}
+		mu.Unlock()
+		http.Error(w, "Not found", http.StatusNotFound)
+
+	case http.MethodPost:
+		if path != "/todos" && path != "/todos/" {
+			http.Error(w, "Bad path", http.StatusBadRequest)
+			return
+		}
+
+		var input struct{ Title string `json:"title"` }
 		if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 			http.Error(w, "Invalid JSON", http.StatusBadRequest)
 			return
 		}
 		if input.Title == "" {
-			http.Error(w, "Title is required", http.StatusBadRequest)
+			http.Error(w, "Title required", http.StatusBadRequest)
 			return
 		}
 
 		mu.Lock()
-		newTodo := Todo{
-			ID:    nextID,
-			Title: input.Title,
-			Done:  false,
-		}
+		newTodo := Todo{ID: nextID, Title: input.Title, Done: false}
 		todos = append(todos, newTodo)
 		nextID++
 		mu.Unlock()
@@ -112,30 +93,25 @@ func todosHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(newTodo)
 
 	case http.MethodDelete:
-		idStr := strings.TrimPrefix(r.URL.Path, "/todos/")
+		idStr := strings.TrimPrefix(path, "/todos/")
 		idStr = strings.TrimSuffix(idStr, "/")
 		id, err := strconv.Atoi(idStr)
 		if err != nil || id < 1 {
-			http.Error(w, "Invalid todo ID", http.StatusBadRequest)
+			http.Error(w, "Invalid ID", http.StatusBadRequest)
 			return
 		}
 
 		mu.Lock()
-		var deleted bool
 		for i, t := range todos {
 			if t.ID == id {
 				todos = append(todos[:i], todos[i+1:]...)
-				deleted = true
-				break
+				mu.Unlock()
+				w.WriteHeader(http.StatusNoContent)
+				return
 			}
 		}
 		mu.Unlock()
-
-		if !deleted {
-			http.Error(w, "Todo not found", http.StatusNotFound)
-			return
-		}
-		w.WriteHeader(http.StatusNoContent)
+		http.Error(w, "Not found", http.StatusNotFound)
 
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
