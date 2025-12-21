@@ -218,6 +218,7 @@ function App() {
               fontSize: "1.4rem",
               marginBottom: "30px",
               color: "#ffffffff",
+              textShadow: "0px 0px 7px black",
             }}
           >
             {todos.length === 0
@@ -277,6 +278,7 @@ function App() {
               style={{
                 textAlign: "center",
                 color: "#ffffffff",
+                textShadow: "0px 0px 7px black",
                 fontStyle: "italic",
                 fontSize: "1.3rem",
                 marginTop: "60px",
