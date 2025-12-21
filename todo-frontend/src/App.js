@@ -85,7 +85,7 @@ function App() {
         overflowY: "auto",
         overflowX: "hidden",
         color: "#f0f0f0",
-        paddingBottom: "env(safe-area-inset-bottom, 40px)",
+        paddingBottom: "env(safe-area-inset-bottom, 60px)",
       }}
     >
       {/* Main Christmas scene background */}
@@ -137,7 +137,7 @@ function App() {
         }}
       />
 
-      {/* Scrollable content container */}
+      {/* Scrollable content container with generous padding */}
       <div
         style={{
           position: "relative",
@@ -145,7 +145,7 @@ function App() {
           width: "100%",
           minHeight: "100vh",
           overflowY: "auto",
-          padding: "20px 20px 120px 20px", // Extra bottom padding for footer space
+          padding: "20px 20px 120px 20px", // Extra bottom padding for smooth scrolling
           boxSizing: "border-box",
         }}
       >
@@ -239,7 +239,7 @@ function App() {
                 style={{
                   background: "rgba(255, 255, 255, 0.1)",
                   backdropFilter: "blur(8px)",
-                  marginBottom: "15px",
+                  marginBottom: "30px", // Increased margin below each todo for breathing room
                   padding: "20px",
                   borderRadius: "14px",
                   boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
@@ -367,7 +367,6 @@ function App() {
             </div>
           )}
         </div>
-
         {/* Festive Footer */}
         <footer
           style={{
@@ -438,7 +437,7 @@ function App() {
           align-items: flex-start;
         }
         @media (max-width: 768px) {
-          [style*="padding: 20px 20px 80px 20px"] {
+          [style*="padding: 20px 20px 120px 20px"] {
             padding-bottom: 160px !important;
           }
           h2[style*='fontSize: "4rem"'] {
