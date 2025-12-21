@@ -104,7 +104,7 @@ function App() {
         <div
           style={{
             width: "100vw",
-            height: "1168px",
+            height: "100vh",
             maxWidth: "100vw",
             maxHeight: "100vh",
             backgroundImage:
