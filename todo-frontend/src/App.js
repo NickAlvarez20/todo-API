@@ -74,7 +74,7 @@ function App() {
     <div
       style={{
         width: "100vw",
-        height: "100vh",
+        minHeight: "100vh", // Use minHeight instead of fixed height
         margin: 0,
         padding: 0,
         boxSizing: "border-box",
@@ -82,8 +82,10 @@ function App() {
         position: "fixed",
         top: 0,
         left: 0,
-        overflow: "hidden",
+        overflowY: "auto", // Allow vertical scroll
+        overflowX: "hidden",
         color: "#f0f0f0",
+        paddingBottom: "env(safe-area-inset-bottom, 40px)", // Extra space for mobile keyboard/notch
       }}
     >
       {/* Main Christmas scene background */}
@@ -140,9 +142,9 @@ function App() {
           position: "relative",
           zIndex: 3,
           width: "100%",
-          height: "100%",
+          minHeight: "100vh",
           overflowY: "auto",
-          padding: "40px 20px",
+          padding: "20px 20px 80px 20px", // Reduced top padding, more bottom for keyboard
           boxSizing: "border-box",
         }}
       >
@@ -413,14 +415,29 @@ function App() {
           flex-direction: column;
           align-items: flex-start;
         }
-        @media (min-width: 768px) {
-          .add-form {
-            flex-direction: row;
+        @media (max-width: 768px) {
+          [style*="padding: 20px 20px 80px 20px"] {
+            padding-bottom: 120px !important;
           }
-          .todo-item {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
+          h2[style*='fontSize: "4rem"'] {
+            font-size: 3rem !important;
+          }
+          p[style*='fontSize: "2rem"'] {
+            font-size: 1.6rem !important;
+          }
+          h1 {
+            font-size: 2.2rem !important;
+            margin-bottom: 30px;
+          }
+
+          .add-form > input,
+          .add-form > button {
+            font-size: 1.1rem;
+            padding: 14px 18px;
+          }
+
+          .todo-item > span {
+            font-size: 1.2rem;
           }
         }
         @media (min-width: 1024px) {
