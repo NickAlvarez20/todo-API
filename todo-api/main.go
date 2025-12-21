@@ -34,6 +34,9 @@ func todosHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	// Log every request to /todos
+    log.Printf("Request: %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
 	
 
 	// Handle preflight OPTIONS request
