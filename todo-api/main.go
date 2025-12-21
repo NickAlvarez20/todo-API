@@ -25,12 +25,22 @@ type Todo struct {
 	Done  bool   `json:"done"`
 }
 
-var todos []Todo   // Slice to hold all todos
+var todos = []Todo{}   // Slice to hold all todos
 var nextID int = 1 // A counter for the next available ID (start at 1)
 var mu sync.Mutex  // A mutex to make it safe when multiple requests try to read/write the todos at the same time (Add sync to import)
 
 func todosHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	
+
+	// Handle preflight OPTIONS request
+	if r.Method == http.MethodOptions {
+    w.WriteHeader(http.StatusOK)
+    return
+}
 
 	switch r.Method {
 	case http.MethodGet:
