@@ -2,34 +2,29 @@ import { useState, useEffect } from "react";
 
 function App() {
   // useState Variables
-  const [todos, setTodos] = useState([]); // for todos list
-  const [newTitle, setNewTitle] = useState(""); // for input field
-  const [celebratingId, setCelebratingId] = useState(null); // Tracks which todo is being celebrated
+  const [todos, setTodos] = useState([]);
+  const [newTitle, setNewTitle] = useState("");
+  const [celebratingId, setCelebratingId] = useState(null);
   const [showCelebration, setShowCelebration] = useState(false);
 
-  // useEffect variables
+  // useEffect to load todos from the same domain (serverless on Vercel)
   useEffect(() => {
     fetch("/todos")
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        if (!response.ok) throw new Error("Network response was not ok");
         return response.json();
       })
-      .then((data) => {
-        setTodos(Array.isArray(data) ? data : []);
-      })
+      .then((data) => setTodos(Array.isArray(data) ? data : []))
       .catch((error) => {
         console.error("Error fetching todos:", error);
         setTodos([]);
       });
   }, []);
 
-  // handleSubmit function
+  // handleSubmit — POST to same domain
   const handleSubmit = async (e) => {
-    e.preventDefault(); // prevent page reload
-
-    if (newTitle.trim() === "") return; //don't add empty
+    e.preventDefault();
+    if (newTitle.trim() === "") return;
 
     const response = await fetch("/todos", {
       method: "POST",
@@ -39,16 +34,15 @@ function App() {
 
     if (response.ok) {
       const newTodo = await response.json();
-      setTodos([...todos, newTodo]); // <- Instant UI update!
-      setNewTitle(""); // clears input
+      setTodos([...todos, newTodo]);
+      setNewTitle("");
     } else {
       console.error("Failed to add todo");
     }
   };
 
-  // handleDelete function
+  // handleDelete — DELETE to same domain
   const handleDelete = async (id) => {
-    // Trigger celebration animation
     setCelebratingId(id);
     setShowCelebration(true);
 
@@ -58,18 +52,17 @@ function App() {
 
     if (response.ok) {
       setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-
-      // Hide celebration after animation
       setTimeout(() => {
         setShowCelebration(false);
         setCelebratingId(null);
-      }, 2000); // Matches animation duration
+      }, 2000);
     } else {
       console.error("Failed to delete todo:", id);
       setShowCelebration(false);
       setCelebratingId(null);
     }
   };
+
   return (
     <div
       style={{
@@ -79,8 +72,12 @@ function App() {
         padding: 0,
         boxSizing: "border-box",
         fontFamily: "'Segoe UI', Roboto, sans-serif",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        overflowY: "auto",
+        overflowX: "hidden",
         color: "#f0f0f0",
-        backgroundColor: "#000",
         paddingBottom: "env(safe-area-inset-bottom, 60px)",
       }}
     >
@@ -104,12 +101,12 @@ function App() {
         <div
           style={{
             width: "100vw",
-            height: "100%",
+            height: "1168px",
             maxWidth: "100vw",
             maxHeight: "100vh",
             backgroundImage:
               "url('/ChristmasBackgroundTheme-GrandHolyPalace.jpg')",
-            backgroundSize: "100% 100%",
+            backgroundSize: "100% 1168px",
             backgroundPosition: "center top",
             backgroundRepeat: "no-repeat",
           }}
@@ -133,14 +130,15 @@ function App() {
         }}
       />
 
-      {/* Scrollable content container with generous padding */}
+      {/* Scrollable content container */}
       <div
         style={{
           position: "relative",
           zIndex: 3,
           width: "100%",
           minHeight: "100vh",
-          padding: "20px 20px 120px 20px", // Extra bottom padding for smooth scrolling
+          overflowY: "auto",
+          padding: "20px 20px 120px 20px",
           boxSizing: "border-box",
         }}
       >
@@ -217,7 +215,7 @@ function App() {
               textAlign: "center",
               fontSize: "1.4rem",
               marginBottom: "30px",
-              color: "#ffffffff",
+              color: "#ffd700",
               textShadow: "0px 0px 7px black",
             }}
           >
@@ -235,7 +233,7 @@ function App() {
                 style={{
                   background: "rgba(255, 255, 255, 0.1)",
                   backdropFilter: "blur(8px)",
-                  marginBottom: "30px", // Increased margin below each todo for breathing room
+                  marginBottom: "30px",
                   padding: "20px",
                   borderRadius: "14px",
                   boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
@@ -277,7 +275,7 @@ function App() {
             <p
               style={{
                 textAlign: "center",
-                color: "#ffffffff",
+                color: "#ffd700",
                 textShadow: "0px 0px 7px black",
                 fontStyle: "italic",
                 fontSize: "1.3rem",
@@ -363,27 +361,28 @@ function App() {
               </div>
             </div>
           )}
+
+          {/* Festive Footer */}
+          <footer
+            style={{
+              marginTop: "80px",
+              padding: "20px",
+              textAlign: "center",
+              color: "#ffd700",
+              fontSize: "1rem",
+              borderTop: "1px solid rgba(255,215,0,0.3)",
+              background: "rgba(0,0,0,0.3)",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <p style={{ margin: "10px 0" }}>
+              Made with ❤️ and holiday magic · {new Date().getFullYear()}
+            </p>
+            <p style={{ margin: "5px 0", fontSize: "0.9rem", opacity: 0.8 }}>
+              Merry Christmas & Happy Holidays! 🎅✨
+            </p>
+          </footer>
         </div>
-        {/* Festive Footer */}
-        <footer
-          style={{
-            marginTop: "80px",
-            padding: "20px",
-            textAlign: "center",
-            color: "#ffd700",
-            fontSize: "1rem",
-            borderTop: "1px solid rgba(255,215,0,0.3)",
-            background: "rgba(0,0,0,0.3)",
-            backdropFilter: "blur(8px)",
-          }}
-        >
-          <p style={{ margin: "10px 0" }}>
-            Made with ❤️ and holiday magic · {new Date().getFullYear()}
-          </p>
-          <p style={{ margin: "5px 0", fontSize: "0.9rem", opacity: 0.8 }}>
-            Merry Christmas & Happy Holidays! 🎅✨
-          </p>
-        </footer>
       </div>
 
       {/* Animations */}
