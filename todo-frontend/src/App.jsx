@@ -72,10 +72,6 @@ function App() {
         padding: 0,
         boxSizing: "border-box",
         fontFamily: "'Segoe UI', Roboto, sans-serif",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        overflowY: "auto",
         overflowX: "hidden",
         color: "#f0f0f0",
         paddingBottom: "env(safe-area-inset-bottom, 60px)",
@@ -137,7 +133,6 @@ function App() {
           zIndex: 3,
           width: "100%",
           minHeight: "100vh",
-          overflowY: "auto",
           padding: "20px 20px 120px 20px",
           boxSizing: "border-box",
         }}
