@@ -27,9 +27,9 @@ Additional libraries are required: Go modules (via go.mod in todo-api) and Node.
 ## Features
 This Todo-API includes these features:
 
-*RESTful backend API in Go for todo management
-*Interactive frontend built with JavaScript and Vite
-*Full-stack integration for creating, reading, updating, and deleting todos
+* RESTful backend API in Go for todo management
+* Interactive frontend built with JavaScript and Vite
+* Full-stack integration for creating, reading, updating, and deleting todos
 
 
 ## Getting Started & Installation
@@ -45,9 +45,9 @@ For the frontend: Navigate to todo-frontend, install dependencies with npm insta
 ## Learning Outcomes
 This project helped me:
 
-*Build a backend API with Go
-*Develop a modern frontend using Vite and JavaScript
-*Connect frontend and backend in a full-stack application
+* Build a backend API with Go
+* Develop a modern frontend using Vite and JavaScript
+* Connect frontend and backend in a full-stack application
 
 ## Contributing
 This is primarily a personal learning / portfolio repository, so formal contributions aren’t required. However, if you spot bugs, have project ideas, or want to add improvements, feel free to:
@@ -56,7 +56,7 @@ This is primarily a personal learning / portfolio repository, so formal contribu
 3. Submit a pull request Please include clear explanations of your changes and test any new code.
 ## License
 This repository is open and free for educational use.
-*(If you decide on a specific license later, insert it here — e.g. MIT, Apache 2.0, etc.)*
+* (If you decide on a specific license later, insert it here — e.g. MIT, Apache 2.0, etc.)*
 ## Credits & Acknowledgements
 This project was created by NickAlvarez20 as part of my journey to learn Go and React programming. Check out my other repositories to see more of my work!
 ## Contact
